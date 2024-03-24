@@ -21,19 +21,14 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-BinaryTreeNode<int>* findstart(int start, BinaryTreeNode<int>* root){
-    if(root==NULL) return nullptr;
-    if(root->data==start) return root;
-    if(root->left) findstart(start, root->left);
-    if(root->right) findstart(start, root->right);
-    return nullptr;
-}
-void markparents(BinaryTreeNode<int> *root, unordered_map<BinaryTreeNode<int>*, BinaryTreeNode<int>*>& p, BinaryTreeNode<int>* target){
-        queue<BinaryTreeNode<int>*> q;
 
+BinaryTreeNode<int>* markparents(BinaryTreeNode<int> *root, unordered_map<BinaryTreeNode<int>*, BinaryTreeNode<int>*>& p, int start){
+        queue<BinaryTreeNode<int>*> q;
+        BinaryTreeNode<int>* res;
         q.push(root);
         while(!q.empty()){
             BinaryTreeNode<int>* curr=q.front();
+            if(curr->data==start) res=curr;
             q.pop();
             if(curr->left){
                 p[curr->left]=curr;
@@ -44,13 +39,13 @@ void markparents(BinaryTreeNode<int> *root, unordered_map<BinaryTreeNode<int>*, 
                 q.push(curr->right);
             }
         }
+        return res;
     }
 int timeToBurnTree(BinaryTreeNode<int>* root, int start)
 {
         unordered_map<BinaryTreeNode<int>*,BinaryTreeNode<int>*> p;
         unordered_map<BinaryTreeNode<int>*, bool> visited;
-        BinaryTreeNode<int>* target=findstart(start, root);
-        markparents(root,p,target);
+        BinaryTreeNode<int>* target=markparents(root,p,start);
         queue<BinaryTreeNode<int>*> q;
         q.push(target);
         visited[target]=true;
@@ -72,8 +67,9 @@ int timeToBurnTree(BinaryTreeNode<int>* root, int start)
                     q.push(p[node]);
                     visited[p[node]]=true;
                 }
-                time++;
+                
             }
+            time++;
         }    
         return time;
     // Write your code here
